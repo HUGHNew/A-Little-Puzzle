@@ -164,6 +164,7 @@ int TicTacToe::getMatchNext() {
     case Match::Computer:
       return findBest(false);
     case Match::Network:
+      break;
         //todo network com
   }
 }

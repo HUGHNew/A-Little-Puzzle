@@ -30,5 +30,7 @@ void GUI() {
 	closegraph();
 }
 int main() {
+  TicTacToe t;
+  t.play();
 	return 0;
 }
