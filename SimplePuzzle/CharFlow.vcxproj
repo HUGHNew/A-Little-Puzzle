@@ -21,9 +21,10 @@
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
-    <ProjectGuid>{bda37c08-afa4-4e90-8a44-b532e5291d21}</ProjectGuid>
-    <RootNamespace>SimplePuzzle</RootNamespace>
+    <ProjectGuid>{ed640601-39a5-42d6-966e-8de22a1f37fc}</ProjectGuid>
+    <RootNamespace>Puzzle</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>SimplePuzzle</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -139,16 +140,15 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="FallingChar.cpp" />
-    <ClCompile Include="SimplePuzzle.cpp" />
-    <ClCompile Include="TicTacToe.cpp" />
-    <ClCompile Include="UnitTest.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="source\GameBoard.cpp" />
+    <ClCompile Include="source\utility.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="base.hpp" />
-    <ClInclude Include="FallingChar.h" />
-    <ClInclude Include="TicTacToe.h" />
-    <ClInclude Include="Tools.hpp" />
+    <ClInclude Include="include\CharComet.hpp" />
+    <ClInclude Include="include\GameBoard.h" />
+    <ClInclude Include="include\utility.h" />
+    <ClInclude Include="source\Narrator.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
