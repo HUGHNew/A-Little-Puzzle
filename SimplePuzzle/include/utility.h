@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 enum class Direction { Up = 1, Down = 2, Left = 4, Right = 8 };
 struct Point {
   int x, y;

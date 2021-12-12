@@ -50,4 +50,11 @@ class GameBoard {
   */
   static int GetStartMenuRawBlockInput(bool press=true) noexcept;
   static void FlushAll() noexcept;
+  struct Comments {
+    static const wchar_t* Title;
+    static const wchar_t* CometComment;
+    static const wchar_t* SnakeComment;
+    static const wchar_t* T3Comment;
+    static const wchar_t* CommentsList[3];
+  };
 };

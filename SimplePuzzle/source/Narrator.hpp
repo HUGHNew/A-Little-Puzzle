@@ -1,27 +1,44 @@
-#pragma once
+ï»¿#pragma once
 #include <graphics.h>
 
-static class Narrator {
-  constexpr static const wchar_t* AsideWords[] = {
-      _T("Ò²ÐíÒ»´Î£¬Ò²ÐíÇ§Íò±é\n¿´¼û£¬ÒÖ»ò¿´²»¼û"),
-      _T("ºÜ¾ÃÖ®ºó£¬Ëü»òÐí»á¸¡ÏÖ\n²»¹ý£¬Ò»Ë²Ö®¼ä"),
-      _T("Ö»ÊÇÒ»Ë²£¬ÒÖ»òÊÇÓÀºã"),
-      _T("ÓÐËùÏÞÖÆ ±ØÓÐËùÍ»ÆÆ"),
-      _T("Õ½Ê¤ÎÒ ÄÃµ½´ð°¸"),
-      _T("Äã»òÐí¿ÉÒÔ×ßµã½Ý¾¶£¿(°´)"),  //ÍøÂç¶ÔÕ½
-      _T("È¡Ê¤Ö®µÀ ´ÓÎ´ÓÐÖ®"),
-      _T("ÄãÓ¦¸ÃÖªµÀÁËÊ¤ËãÈçºÎ"),
-      _T("ÎÞÒâÖ®¾Ù"),
-      _T("»¶Ó­À´µ½ÃÔÄã½âÃÕ£¬ÔÚÕâÀï£¬Ëù¼û¼´ËùµÃ"),
-      _T("°´\n"),  //Ñ¡Ïî½çÃæ
-      _T("Ç°ÃæµÄÇøÓò ÒÔºóÔÙÀ´Ì½Ë÷°É"),
-      _T("¿´À´ ÄãºÜ¶®Å¶"),
-      _T("ÔËÆø²»´í ¿ÉÏ§Ã»½á¹û"),
-      _T("¹éÑÉ ´ý°ì")};
+namespace Words {
+constexpr static const wchar_t* ESC = _T("ç»ˆäºŽæ”¾å¼ƒäº†ï¼Ÿ");
+constexpr static const wchar_t* ANS = _T("ä½ æ‚Ÿäº†"); // answer
+    namespace Comets {
+    constexpr static const wchar_t* Hint =
+        _T("ä¹Ÿè®¸ä¸€æ¬¡ï¼Œä¹Ÿè®¸åƒä¸‡é\nçœ‹è§ï¼ŒæŠ‘æˆ–çœ‹ä¸è§");
+    constexpr static const wchar_t* Start =
+        _T("å¾ˆä¹…ä¹‹åŽï¼Œå®ƒæˆ–è®¸ä¼šæµ®çŽ°\nä¸è¿‡ï¼Œä¸€çž¬ä¹‹é—´");
+    constexpr static const wchar_t* Internal = _T("åªæ˜¯ä¸€çž¬ï¼ŒæŠ‘æˆ–æ˜¯æ°¸æ’");
+    }  // namespace Comets
+    namespace Snake {
+    constexpr static const wchar_t * Hiss= _T("æœ‰æ‰€é™åˆ¶ å¿…æœ‰æ‰€çªç ´");
+    }
+    namespace T3 {
+    constexpr static const wchar_t* Start = _T("æˆ˜èƒœæˆ‘ æ‹¿åˆ°ç­”æ¡ˆ");
+    constexpr static const wchar_t* Fail1 = _T("å–èƒœä¹‹é“ ä»Žæœªæœ‰ä¹‹");
+    constexpr static const wchar_t* Fail3 = _T("ä½ åº”è¯¥çŸ¥é“äº†èƒœç®—å¦‚ä½•");
+    constexpr static const wchar_t* Fail5 = _T("æ— æ„ä¹‹ä¸¾");
+    }  // namespace T3
+    namespace End {
+    constexpr static const wchar_t* LockAll = _T("å‰é¢çš„åŒºåŸŸ ä»¥åŽå†æ¥æŽ¢ç´¢å§");
+    constexpr static const wchar_t* LockRest = _T("çœ‹æ¥ ä½ å¾ˆæ‡‚å“¦");
+    constexpr static const wchar_t* LockComet = _T("è¿æ°”ä¸é”™ å¯æƒœæ²¡ç»“æžœ");
+    constexpr static const wchar_t* Unlock = _T("å½’ç„‰ å¾…åŠž");
+    }  // namespace End
+    constexpr static const wchar_t* AllWords[] = {
+        Comets::Hint, Comets::Start, Comets::Internal,
+        Snake::Hiss,
+        T3::Start,T3::Fail1,T3::Fail3,T3::Fail5,
+        End::LockAll, End::LockRest, End::LockComet,End::Unlock,
+        ESC,ANS
+    };
+}
+class Narrator {
   static LOGFONT* AsideFont;
   #pragma region PrintWords
   static void PrintWords(RECT* r, UINT idx) {
-    drawtext(AsideWords[idx], r, DT_CENTER | DT_VCENTER);
+    drawtext(Words::AllWords[idx], r, DT_CENTER | DT_VCENTER);
   }
   static void PrintWords(int x, int y, int width, int height, UINT idx) {
     RECT r = {x, y, x + width, y + height};
@@ -39,32 +56,35 @@ static class Narrator {
   #pragma endregion
  public:
   enum PuzzleAside {
-    CometSlip, CometStart, CometInternal,
+    CometHint, CometStart, CometInternal,
     SnakeHiss,
-    TStart, TFailed3, TGame1, TGame5, TGame10,
-    Welcome, Select,
-    LockALL, LockRest, LockComet, Unlock
+    TStart, TGame1, TGame3, TGame5,
+    LockALL, LockRest, LockComet, Unlock,
+    ESC,ANS
   };
   /**
   * @brief show the narrator' words
   */
-  static void showContent(int idx, int msec, int fontheight = 50) {
+  static void showContent(int idx, int msec,bool flush ,int fontheight = 50) {
     cleardevice();
     LOGFONT font;
     gettextstyle(&font);
     font.lfHeight = fontheight;
+    font.lfWidth = fontheight >> 1;
     font.lfQuality = ANTIALIASED_QUALITY;
-    _tcscpy_s(font.lfFaceName, _T("ºÚÌå"));
+    //_tcscpy_s(font.lfFaceName, _T("é»‘ä½“"));
     settextstyle(&font);
     PrintWords(idx);
+    if (flush) {FlushBatchDraw();}
     Sleep(msec);
     cleardevice();
   }
   static constexpr int DefaultTimeGap_msec = 2000;
-  static void Say(PuzzleAside idx, int msec = DefaultTimeGap_msec) {
-    cleardevice();
-    showContent((int)idx, msec);
-    cleardevice();
+  static void Say(PuzzleAside idx, bool flush = false,
+                  int msec = DefaultTimeGap_msec) {
+    //BeginBatchDraw();
+    showContent((int)idx, msec,flush);
+    //FlushBatchDraw();
   }
   static int SetFontHeight(int height) {
     int old_height = 0;

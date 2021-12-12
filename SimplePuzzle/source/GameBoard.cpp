@@ -3,6 +3,7 @@
 
 
 #include "../include/GameBoard.h"
+#include "Narrator.hpp"
 
 namespace Random {
 int Ascii2Pos(char ch) {
@@ -40,92 +41,16 @@ static RECT GetFitRect(int size,int seq=0) {
   // left,top,right,bottom
   return {wdelta * seq, top, right, height - top};
 }
+static RECT GetCommentRect(RECT const&base) { 
+    int height = getheight();
+  return {0, base.bottom, getwidth(), height - ((height - base.bottom)>>1)};
+}
+static RECT GetTitleRect(RECT const& base) {
+  int height = getheight();
+  return {0, (height - base.bottom) >> 1, getwidth(), base.bottom};
+}
 #pragma endregion
 
-#pragma region digit
-static const wchar_t* DIGIT_ASCII[] = {
-    _T(R"(
-d88888D d88888b d8888b.  .d88b.  
-YP  d8' 88'     88  `8D .8P  Y8. 
-   d8'  88ooooo 88oobY' 88    88 
-  d8'   88~~~~~ 88`8b   88    88 
- d8' db 88.     88 `88. `8b  d8' 
-d88888P Y88888P 88   YD  `Y88P'  
-)"),
-    _T(R"(
- .d88b.  d8b   db d88888b 
-.8P  Y8. 888o  88 88'     
-88    88 88V8o 88 88ooooo 
-88    88 88 V8o88 88~~~~~ 
-`8b  d8' 88  V888 88.     
- `Y88P'  VP   V8P Y88888P 
-)"),
-    _T(R"(
-d888888b db   d8b   db  .d88b.  
-`~~88~~' 88   I8I   88 .8P  Y8. 
-   88    88   I8I   88 88    88 
-   88    Y8   I8I   88 88    88 
-   88    `8b d8'8b d8' `8b  d8' 
-   YP     `8b8' `8d8'   `Y88P'  
-)"),
-    _T(R"(
-d888888b db   db d8888b. d88888b d88888b 
-`~~88~~' 88   88 88  `8D 88'     88'     
-   88    88ooo88 88oobY' 88ooooo 88ooooo 
-   88    88~~~88 88`8b   88~~~~~ 88~~~~~ 
-   88    88   88 88 `88. 88.     88.     
-   YP    YP   YP 88   YD Y88888P Y88888P 
-)"),
-    _T(R"(
-d88888b  .d88b.  db    db d8888b. 
-88'     .8P  Y8. 88    88 88  `8D 
-88ooo   88    88 88    88 88oobY' 
-88~~~   88    88 88    88 88`8b   
-88      `8b  d8' 88b  d88 88 `88. 
-YP       `Y88P'  ~Y8888P' 88   YD 
-)"),
-    _T(R"(
-d88888b d888888b db    db d88888b 
-88'       `88'   88    88 88'     
-88ooo      88    Y8    8P 88ooooo 
-88~~~      88    `8b  d8' 88~~~~~ 
-88        .88.    `8bd8'  88.     
-YP      Y888888P    YP    Y88888P 
-)"),
-    _T(R"(
-.d8888. d888888b db    db 
-88'  YP   `88'   `8b  d8' 
-`8bo.      88     `8bd8'  
-  `Y8b.    88     .dPYb.  
-db   8D   .88.   .8P  Y8. 
-`8888Y' Y888888P YP    YP 
-)"),
-    _T(R"(
-.d8888. d88888b db    db d88888b d8b   db 
-88'  YP 88'     88    88 88'     888o  88 
-`8bo.   88ooooo Y8    8P 88ooooo 88V8o 88 
-  `Y8b. 88~~~~~ `8b  d8' 88~~~~~ 88 V8o88 
-db   8D 88.      `8bd8'  88.     88  V888 
-`8888Y' Y88888P    YP    Y88888P VP   V8P 
-)"),
-    _T(R"(
-d88888b d888888b  d888b  db   db d888888b 
-88'       `88'   88' Y8b 88   88 `~~88~~' 
-88ooooo    88    88      88ooo88    88    
-88~~~~~    88    88  ooo 88~~~88    88    
-88.       .88.   88. ~8~ 88   88    88    
-Y88888P Y888888P  Y888P  YP   YP    YP   
-)"),
-    _T(R"(
-d8b   db d888888b d8b   db d88888b 
-888o  88   `88'   888o  88 88'     
-88V8o 88    88    88V8o 88 88ooooo 
-88 V8o88    88    88 V8o88 88~~~~~ 
-88  V888   .88.   88  V888 88.     
-VP   V8P Y888888P VP   V8P Y88888P 
-)"),
-};
-#pragma endregion
 
 GameBoard::GameBoard() noexcept : CometsAnswer(Random::GetRandomAscii()) {
   CurrentChoice = 1;
@@ -160,13 +85,17 @@ void GameBoard::run() noexcept {
   }
 }
 void flush_key_msg(int count = 2) {
-  while (--count) {
-    getmessage(EM_KEY);
+  ExMessage msg;
+  if (count == -1) {
+    while (peekmessage(&msg, EM_KEY));
+  } else {
+      while (--count) {
+        getmessage(EM_KEY);
+      }
   }
 }
     // todo key event control and Answer TIME
 bool GameBoard::Comets() noexcept {
-  FlushAll();
   /**
    * 2-bit control flag
    * 0x1 clear flag
@@ -181,18 +110,18 @@ bool GameBoard::Comets() noexcept {
   constexpr int Finish = 8;
   /**
    * answer gap - 5s
-   * random gap - 100ms
+   * random gap - 200ms
   */
   constexpr int Barrier = 500;
-  constexpr int Correct = 10;
+  constexpr int Correct = 20;
   int counter = Barrier;
   constexpr int SleepUnit = 10; // ms
 
-  settextstyle(16, 8, _T("Courier"));  // 设置字体
+  //Narrator::Say(Narrator::CometHint);
+  //Narrator::Say(Narrator::CometStart);
+  FlushAll();
 
-  // 设置颜色
-  settextcolor(GREEN);
-  setlinecolor(BLACK);
+  settextstyle(16, 8, _T("Courier"));  // 设置字体
 
   int height = getheight();
   RECT r = {0, 0, getwidth(), height};
@@ -221,7 +150,14 @@ bool GameBoard::Comets() noexcept {
     --counter;
     if (counter == 0) { // state transfer
       controlFlag ^= Answer;
-      counter = controlFlag & Answer ? Correct : Barrier;
+      if (controlFlag & Answer) {
+        counter = Correct;
+        Narrator::Say(Narrator::CometInternal,true);
+        FlushAll();
+      } else {
+        counter = Barrier;
+      }
+      settextstyle(16, 8, _T("Courier"));
     }
     Sleep(SleepUnit);
 
@@ -236,8 +172,14 @@ bool GameBoard::Comets() noexcept {
       controlFlag |= Finish;
     }
     if (controlFlag >= ESC) {
-      flush_key_msg();
-      // narrator's work
+      if (controlFlag >= Finish) {
+        Narrator::Say(Narrator::ANS,true);
+      } else {
+        Narrator::Say(Narrator::ESC,true);
+      }
+      //flush_key_msg();
+      EndBatchDraw();
+      FlushAll();
       return controlFlag >= Finish;
     }
   }
@@ -269,24 +211,43 @@ int GameBoard::StartMenu() noexcept {
 }
 
 void GameBoard::InitStartMenu() const noexcept { DrawStartMenu(0); }
-
+#pragma region constant 
+const wchar_t* GameBoard::Comments::Title =
+    _T("这里是只需要键盘的小解谜，每个游戏都会自己的答案\n按方向键切换游戏;按回车键进入;")
+    _T("按ESC退出");
+const wchar_t* GameBoard::Comments::CometComment =
+    _T("寻找字符流里面的奥秘");
+const wchar_t* GameBoard::Comments::SnakeComment =
+    _T("探索贪吃蛇的异常");
+const wchar_t* GameBoard::Comments::T3Comment = _T("发现井字棋的胜率");
+const wchar_t* GameBoard::Comments::CommentsList[3] = {CometComment,
+                                                       SnakeComment, T3Comment};
+#pragma endregion
 void GameBoard::DrawStartMenu(int idx) const noexcept {
   static const wchar_t* SM[] = {_T("流"), _T("蛇"), _T("棋")};
   FlushAll();
   RECT text_rects[] = {GetFitRect(3, 0), GetFitRect(3, 1), GetFitRect(3, 2)};
+  RECT title_rect = GetTitleRect(text_rects[0]),
+       comment_rect = GetCommentRect(text_rects[0]);
   int rect_height = text_rects[0].bottom - text_rects[0].top;
   int rect_width  = text_rects[0].right - text_rects[0].left;
-  static LOGFONT normal,old;
+  static LOGFONT normal,comment;
   gettextstyle(&normal);
-  old = normal;
+  comment = normal;
   normal.lfHeight = rect_height;
   normal.lfWidth = rect_width>>1;
   normal.lfQuality = ANTIALIASED_QUALITY; // 抗锯齿
+  comment.lfHeight = 15;
+  comment.lfWidth = 10;
+  comment.lfQuality = ANTIALIASED_QUALITY;  // 抗锯齿
   COLORREF old_color=gettextcolor();
 
-  settextstyle(&normal);
 
   BeginBatchDraw();
+  settextstyle(&comment);
+  drawtext(Comments::Title, &title_rect, DT_CENTER | DT_VCENTER);
+  drawtext(Comments::CommentsList[idx], &comment_rect, DT_CENTER | DT_VCENTER);
+  settextstyle(&normal);
   settextcolor(WHITE);
   for (int i = 0; i < 3; ++i) {
     if (i == idx) {
@@ -297,7 +258,7 @@ void GameBoard::DrawStartMenu(int idx) const noexcept {
       drawtext(SM[i], text_rects + i, DT_CENTER | DT_VCENTER);
     }
   }
-  FlushBatchDraw();
+  EndBatchDraw();
 }
 
 int GameBoard::CursorMove(bool left) noexcept { 
@@ -363,6 +324,7 @@ int GameBoard::GetStartMenuRawBlockInput(bool press) noexcept {
 }
 
 void GameBoard::FlushAll() noexcept {
+  flush_key_msg(-1);
   cleardevice();
   FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // Windows Console API
 }
