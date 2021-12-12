@@ -59,7 +59,7 @@ GameBoard::GameBoard() noexcept : CometsAnswer(Random::GetRandomAscii()) {
 }
 
 void GameBoard::run() noexcept {
-  int option = StartMenu(),rel = 0;
+  int option,rel = 0;
   while (true) {
     option = StartMenu();
     switch (option) {
@@ -118,8 +118,8 @@ bool GameBoard::Comets() noexcept {
   int counter = Barrier;
   constexpr int SleepUnit = 10; // ms
 
-  //Narrator::Say(Narrator::CometHint);
-  //Narrator::Say(Narrator::CometStart);
+  Narrator::Say(Narrator::CometHint);
+  Narrator::Say(Narrator::CometStart);
   FlushAll();
 
   settextstyle(16, 8, _T("Courier"));  // 设置字体
@@ -259,8 +259,8 @@ void GameBoard::DrawStartMenu(int idx) const noexcept {
   normal.lfHeight = rect_height;
   normal.lfWidth = rect_width>>1;
   normal.lfQuality = ANTIALIASED_QUALITY; // 抗锯齿
-  comment.lfHeight = 15;
-  comment.lfWidth = 10;
+  comment.lfHeight = 20;
+  comment.lfWidth = 12;
   comment.lfQuality = ANTIALIASED_QUALITY;  // 抗锯齿
   COLORREF old_color=gettextcolor();
 
@@ -316,16 +316,16 @@ int GameBoard::GetStartMenuOptions(int comet) noexcept {
       ++proc;
     }else{
       proc=0;
-      switch (current) { 
-        case Left:
-          return Left;
-        case Right:
-          return Right;
-        case -1:
-          return -1;
-        case 128:
-          return 0;
-      }
+    }
+    switch (current) {
+      case Left:
+        return Left;
+      case Right:
+        return Right;
+      case -1:
+        return -1;
+      case 128:
+        return 0;
     }
   }while(proc!=3);
   return 1;
