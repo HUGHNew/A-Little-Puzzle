@@ -36,7 +36,8 @@ int GetRandom(int min, int max, bool normal) noexcept {
 }
 char GetRandomAscii(int pos,bool normal) noexcept {
   int tmp = normal? 
-      normal_dist(random_engine, NDT(pos,pos>>3)) : 
+      normal_dist(random_engine, NDT(pos, pos >> 3 ? pos >> 3:1))
+      : 
       distribution(random_engine, 36);
   if (tmp > 9) {
     return tmp - 10 + 'A';

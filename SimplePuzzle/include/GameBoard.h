@@ -7,6 +7,8 @@ class GameBoard {
   CometCollection comets;
   int CometsAnswer, CurrentChoice, Progress;
  public:
+  static constexpr int Left = 37;
+  static constexpr int Right = 39;
   GameBoard()noexcept;
   void run()noexcept;
   bool Comets() noexcept;
@@ -46,5 +48,6 @@ class GameBoard {
    * a|d : shift
    * 128 : enter
   */
-  static int GetStartMenuRawBlockInput() noexcept;
+  static int GetStartMenuRawBlockInput(bool press=true) noexcept;
+  static void FlushAll() noexcept;
 };

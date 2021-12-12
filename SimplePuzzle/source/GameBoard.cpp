@@ -31,7 +31,7 @@ void outtextxy(const SPoint& point) {
   outtextxy(point.x, point.y, point.symbol);
 }
 void outtextxy(const SPoint& point,char ch) {
-  outtextxy(point.x, point.y, ch);
+  outtextxy(point.x, point.y, ch?ch:point.symbol);
 }
 static RECT GetFitRect(int size,int seq=0) {
   int wdelta = getwidth() / size;
@@ -159,11 +159,34 @@ void GameBoard::run() noexcept {
     }
   }
 }
-
-// todo key event control and Answer TIME
+void flush_key_msg(int count = 2) {
+  while (--count) {
+    getmessage(EM_KEY);
+  }
+}
+    // todo key event control and Answer TIME
 bool GameBoard::Comets() noexcept {
-  cleardevice();
-  bool clearFlag = false;
+  FlushAll();
+  /**
+   * 2-bit control flag
+   * 0x1 clear flag
+   * 0x2 show answer flag
+   * 0x4 ESC flag
+   * 0x8 ans flag
+  */
+  int controlFlag = 0;
+  constexpr int Clear = 1;
+  constexpr int Answer = 2;
+  constexpr int ESC = 4;
+  constexpr int Finish = 8;
+  /**
+   * answer gap - 5s
+   * random gap - 100ms
+  */
+  constexpr int Barrier = 500;
+  constexpr int Correct = 10;
+  int counter = Barrier;
+  constexpr int SleepUnit = 10; // ms
 
   settextstyle(16, 8, _T("Courier"));  // 设置字体
 
@@ -181,27 +204,43 @@ bool GameBoard::Comets() noexcept {
           [](SPoint& p) -> SPoint& { p.y += 1; return p; })
       );
     }
+    #pragma region Draw Point
+    char ch = controlFlag & Answer ? CometsAnswer : 0;
     BeginBatchDraw();
     for (auto&& it = comets.begin(); it != comets.end(); ++it) {
       if (it->dead()) {
         it = comets.erase(it);
-        clearFlag = true;
+        controlFlag |= Clear;
       } else {
-        outtextxy(it->getPoint());
+        outtextxy(it->getPoint(),ch);
         it->step();
       }
     }
     FlushBatchDraw();
-    // outtextxy(comets.top().getPoint());
-
-    Sleep(10);  // 延时
-    if (clearFlag) {
-      cleardevice();
-      clearFlag = false;
+    #pragma endregion
+    --counter;
+    if (counter == 0) { // state transfer
+      controlFlag ^= Answer;
+      counter = controlFlag & Answer ? Correct : Barrier;
     }
-    if (_kbhit()) break;  // 按任意键退出
+    Sleep(SleepUnit);
+
+    if (controlFlag & Clear) {
+      cleardevice();
+      --controlFlag; // 1 or 3
+    }
+    if (GetAsyncKeyState(VK_ESCAPE) & 0x8000) {
+      controlFlag |= ESC;
+    }
+    if (GetAsyncKeyState(CometsAnswer) & 0x8000) {
+      controlFlag |= Finish;
+    }
+    if (controlFlag >= ESC) {
+      flush_key_msg();
+      // narrator's work
+      return controlFlag >= Finish;
+    }
   }
-  return false;
 }
 // todo weird snake
 bool GameBoard::Snake() noexcept { return false; }
@@ -215,10 +254,10 @@ int GameBoard::StartMenu() noexcept {
   int ch;
   while (true) {
     switch (ch = GetStartMenuOptions(CometsAnswer)) {
-      case 'a':
+      case Left:
         CurrentChoice = CursorMove(true);
         break;
-      case 'd':
+      case Right:
         CurrentChoice = CursorMove(false);
         break;
       case 0:
@@ -233,60 +272,52 @@ void GameBoard::InitStartMenu() const noexcept { DrawStartMenu(0); }
 
 void GameBoard::DrawStartMenu(int idx) const noexcept {
   static const wchar_t* SM[] = {_T("流"), _T("蛇"), _T("棋")};
+  FlushAll();
   RECT text_rects[] = {GetFitRect(3, 0), GetFitRect(3, 1), GetFitRect(3, 2)};
   int rect_height = text_rects[0].bottom - text_rects[0].top;
+  int rect_width  = text_rects[0].right - text_rects[0].left;
   static LOGFONT normal,old;
   gettextstyle(&normal);
   old = normal;
   normal.lfHeight = rect_height;
+  normal.lfWidth = rect_width>>1;
   normal.lfQuality = ANTIALIASED_QUALITY; // 抗锯齿
   COLORREF old_color=gettextcolor();
 
   settextstyle(&normal);
 
   BeginBatchDraw();
+  settextcolor(WHITE);
   for (int i = 0; i < 3; ++i) {
     if (i == idx) {
       settextcolor(RED);
       drawtext(SM[i], text_rects + i, DT_CENTER | DT_VCENTER);
-      settextcolor(old_color);
+      settextcolor(WHITE);
     } else {
       drawtext(SM[i], text_rects + i, DT_CENTER | DT_VCENTER);
     }
   }
   FlushBatchDraw();
-  //settextstyle(&normal);
 }
 
 int GameBoard::CursorMove(bool left) noexcept { 
   static int init = 0;
-  static bool move = false;
   if (left) {
     if (init != 0) {
-      if (move) {
-        move = false;
-        --init;
-        DrawStartMenu(init);
-      } else {
-        move = true;
-      }
+      --init;
+      DrawStartMenu(init);
     }
   } else {
     if (init != 2) {
-      if (move) {
-        move = false;
-        ++init;
-        DrawStartMenu(init);
-      } else {
-        move = true;
-      }
+      ++init;
+      DrawStartMenu(init);
     }
   }
   return 1 << init;
 }
 
 int GameBoard::GetStartMenuOptions(int comet) noexcept {
-  const int AnswerSet[]={comet,9,5};
+  const int AnswerSet[]={comet,'9','5'};
   constexpr int mask=0x8000;
   int proc=0,current;
   do{
@@ -296,10 +327,10 @@ int GameBoard::GetStartMenuOptions(int comet) noexcept {
     }else{
       proc=0;
       switch (current) { 
-        case 'a':
-          return 'a';
-        case 'd':
-          return 'd';
+        case Left:
+          return Left;
+        case Right:
+          return Right;
         case -1:
           return -1;
         case 128:
@@ -310,24 +341,28 @@ int GameBoard::GetStartMenuOptions(int comet) noexcept {
   return 1;
 }
 
-int GameBoard::GetStartMenuRawBlockInput() noexcept {
+int GameBoard::GetStartMenuRawBlockInput(bool press) noexcept {
   constexpr int mask=0x8000;
   ExMessage msg = getmessage(EM_KEY); // blocked API for key msg
+  while (msg.message != (press ? WM_KEYDOWN : WM_KEYUP)) {
+    msg = getmessage(EM_KEY);
+  }
+  if (Point::InRange(msg.vkcode, 'a', 'z')) {
+    return msg.vkcode - 'a' + 'A';
+  } else if (Point::InRange(msg.vkcode, 'A', 'Z') ||
+             Point::InRange(msg.vkcode, '0', '9')) {
+    return msg.vkcode;
+  }
   switch (msg.vkcode) {
-    case '0':return 0;
-    case '1':return 1;
-    case '2':return 2;
-    case '3':return 3;
-    case '4':return 4;
-    case '5':return 5;
-    case '6':return 6;
-    case '7':return 7;
-    case '8':return 8;
-    case '9':return 9;
-    case VK_LEFT: return 'a'; // left shift
-    case VK_RIGHT: return 'd'; // right shift
+    case VK_LEFT: return Left; // left shift
+    case VK_RIGHT: return Right; // right shift
     case VK_RETURN: return 128; // push choice
     case VK_ESCAPE: return -1; // exit
     default: return 10; // no idea about it
   }
+}
+
+void GameBoard::FlushAll() noexcept {
+  cleardevice();
+  FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // Windows Console API
 }
