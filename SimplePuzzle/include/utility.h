@@ -29,3 +29,4 @@ Point GetPoint() noexcept;
 Point GetPoint(Point const& corner) noexcept;
 Direction GetDirection() noexcept;
 }  // namespace Random
+int print_d(char const* const _Format, ...);

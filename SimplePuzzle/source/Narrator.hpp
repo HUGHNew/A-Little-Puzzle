@@ -25,12 +25,13 @@ constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     constexpr static const wchar_t* LockRest = _T("看来 你很懂哦");
     constexpr static const wchar_t* LockComet = _T("运气不错 可惜没结果");
     constexpr static const wchar_t* Unlock = _T("归焉 待办");
+    constexpr static const wchar_t* Others = _T("未 曾 设 想");
     }  // namespace End
     constexpr static const wchar_t* AllWords[] = {
         Comets::Hint, Comets::Start, Comets::Internal,
         Snake::Hiss,
         T3::Start,T3::Fail1,T3::Fail3,T3::Fail5,
-        End::LockAll, End::LockRest, End::LockComet,End::Unlock,
+        End::LockAll, End::LockRest, End::LockComet,End::Unlock,End::Others,
         ESC,ANS
     };
 }
@@ -59,7 +60,7 @@ class Narrator {
     CometHint, CometStart, CometInternal,
     SnakeHiss,
     TStart, TGame1, TGame3, TGame5,
-    LockALL, LockRest, LockComet, Unlock,
+    LockALL, LockRest, LockComet, Unlock, LockOthers,
     ESC,ANS
   };
   /**

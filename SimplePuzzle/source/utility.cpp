@@ -1,4 +1,5 @@
-﻿#include <random>
+﻿#define DEBUG
+#include <random>
 
 #include "../include/utility.h"
 
@@ -54,3 +55,16 @@ Direction GetDirection() noexcept {
   return Direction(1 << distribution(random_engine, 4));
 }
 }  // namespace Random
+
+int print_d(char const* const _Format, ...){
+#ifdef DEBUG
+    int _Result;
+    va_list _ArgList;
+    __crt_va_start(_ArgList, _Format);
+    _Result = _vfprintf_l(stdout, _Format, NULL, _ArgList);
+    __crt_va_end(_ArgList);
+    return _Result;
+#else
+  return 0;
+#endif
+}

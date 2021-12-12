@@ -55,6 +55,7 @@ static RECT GetTitleRect(RECT const& base) {
 GameBoard::GameBoard() noexcept : CometsAnswer(Random::GetRandomAscii()) {
   CurrentChoice = 1;
   Progress = 0;
+  GoToEnd = false;
 }
 
 void GameBoard::run() noexcept {
@@ -189,7 +190,27 @@ bool GameBoard::Snake() noexcept { return false; }
 // todo 
 bool GameBoard::TicTacToe() noexcept { return false; }
 // todo 
-void GameBoard::TheEnd() noexcept {}
+void GameBoard::TheEnd() noexcept {
+  FlushAll();
+  GoToEnd = true;
+  switch (Progress) {
+    case 0: // LockAll
+      Narrator::Say(Narrator::LockALL);
+      break;
+    case 0x110: // LockComet
+      Narrator::Say(Narrator::LockComet);
+      break;
+    case 0x001: // LockRest
+      Narrator::Say(Narrator::LockRest);
+      break;
+    case 0x111: // Unlock
+      Narrator::Say(Narrator::Unlock);
+      break;
+    default: // LockOthers
+      Narrator::Say(Narrator::LockOthers);
+      break;
+  }
+}
 
 int GameBoard::StartMenu() noexcept {
   InitStartMenu();
@@ -215,6 +236,7 @@ void GameBoard::InitStartMenu() const noexcept { DrawStartMenu(0); }
 const wchar_t* GameBoard::Comments::Title =
     _T("这里是只需要键盘的小解谜，每个游戏都会自己的答案\n按方向键切换游戏;按回车键进入;")
     _T("按ESC退出");
+const wchar_t* GameBoard::Comments::TitleDone =_T("恭喜你完成解密");
 const wchar_t* GameBoard::Comments::CometComment =
     _T("寻找字符流里面的奥秘");
 const wchar_t* GameBoard::Comments::SnakeComment =
@@ -245,7 +267,13 @@ void GameBoard::DrawStartMenu(int idx) const noexcept {
 
   BeginBatchDraw();
   settextstyle(&comment);
-  drawtext(Comments::Title, &title_rect, DT_CENTER | DT_VCENTER);
+  if (GoToEnd) {
+    settextcolor(RED);
+    drawtext(Comments::TitleDone, &title_rect, DT_CENTER | DT_VCENTER);
+    settextcolor(WHITE);
+  } else {
+    drawtext(Comments::Title, &title_rect, DT_CENTER | DT_VCENTER);
+  }
   drawtext(Comments::CommentsList[idx], &comment_rect, DT_CENTER | DT_VCENTER);
   settextstyle(&normal);
   settextcolor(WHITE);
@@ -283,6 +311,7 @@ int GameBoard::GetStartMenuOptions(int comet) noexcept {
   int proc=0,current;
   do{
     current=GetStartMenuRawBlockInput();
+    print_d("current:%d,ans:%d\n",current,AnswerSet[proc]);
     if(current==AnswerSet[proc]){
       ++proc;
     }else{
@@ -308,10 +337,11 @@ int GameBoard::GetStartMenuRawBlockInput(bool press) noexcept {
   while (msg.message != (press ? WM_KEYDOWN : WM_KEYUP)) {
     msg = getmessage(EM_KEY);
   }
-  if (Point::InRange(msg.vkcode, 'a', 'z')) {
+  print_d("%d\n", msg.vkcode);
+  if (Point::InRange(msg.vkcode, 'a', 'z'+1)) {
     return msg.vkcode - 'a' + 'A';
-  } else if (Point::InRange(msg.vkcode, 'A', 'Z') ||
-             Point::InRange(msg.vkcode, '0', '9')) {
+  } else if (Point::InRange(msg.vkcode, 'A', 'Z'+1) ||
+             Point::InRange(msg.vkcode, '0', '9'+1)) {
     return msg.vkcode;
   }
   switch (msg.vkcode) {

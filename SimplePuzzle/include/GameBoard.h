@@ -6,6 +6,7 @@ using CometCollection = std::list<CharComet>;
 class GameBoard {
   CometCollection comets;
   int CometsAnswer, CurrentChoice, Progress;
+  bool GoToEnd;
  public:
   static constexpr int Left = 37;
   static constexpr int Right = 39;
@@ -52,6 +53,7 @@ class GameBoard {
   static void FlushAll() noexcept;
   struct Comments {
     static const wchar_t* Title;
+    static const wchar_t* TitleDone;
     static const wchar_t* CometComment;
     static const wchar_t* SnakeComment;
     static const wchar_t* T3Comment;
