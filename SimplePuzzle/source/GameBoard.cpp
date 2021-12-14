@@ -187,9 +187,61 @@ bool GameBoard::Comets() noexcept {
 }
 // todo weird snake
 bool GameBoard::Snake() noexcept { return false; }
-// todo 
-bool GameBoard::TicTacToe() noexcept { return false; }
-// todo 
+/**
+ * @brief get input during 2 games
+ * @return 
+ *  1 : click to a new game
+ *  0 : hit answer
+ * -1 : exit
+*/
+int getT3Input() {
+  ExMessage msg;
+  while (true) {
+    msg = getmessage(EM_MOUSE | EM_KEY);
+    switch (msg.message) {
+      case WM_KEYDOWN:
+        switch (msg.vkcode) {
+          case VK_ESCAPE:
+            return -1;
+          case '5':
+            return 0;
+        }
+      case WM_LBUTTONDOWN:
+      case WM_RBUTTONDOWN:
+        return 1;
+      default:
+        break;
+    }
+  }
+}
+bool GameBoard::TicTacToe() noexcept { 
+    static int T3GameCounter = 0;
+  static int T3GameLoseCounter = 0;
+    // TODO add T3 already
+  ExMessage msg;
+  do {      
+    ++T3GameCounter;
+    if (T3.play()==TicTacToe::Winner::O) {
+      ++T3GameLoseCounter;
+    }
+    // TODO narrator should say somethings now
+    FlushAll();
+    int op = getT3Input();
+    // restart a game
+    FlushAll();
+    switch (op) {
+      case 1:
+        T3.clear();
+        break;
+      case 0:
+        return true;
+      case -1:
+        return false;
+    }
+  } while (true);
+  return false;
+}
+
 void GameBoard::TheEnd() noexcept {
   FlushAll();
   GoToEnd = true;

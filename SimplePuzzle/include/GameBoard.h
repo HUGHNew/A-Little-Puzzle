@@ -2,9 +2,12 @@
 
 #include <list>
 #include "CharComet.hpp"
+#include "TicTacToe.h"
 using CometCollection = std::list<CharComet>;
 class GameBoard {
   CometCollection comets;
+  TicTacToe T3;
+
   int CometsAnswer, CurrentChoice, Progress;
   bool GoToEnd;
  public:
