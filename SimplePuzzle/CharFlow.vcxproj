@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClInclude Include="include\CharComet.hpp" />
     <ClInclude Include="include\GameBoard.h" />
+    <ClInclude Include="include\Snake.hpp" />
     <ClInclude Include="include\T3Base.h" />
     <ClInclude Include="include\TicTacToe.h" />
     <ClInclude Include="include\utility.h" />

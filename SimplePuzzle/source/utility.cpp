@@ -5,6 +5,7 @@
 
 #include "../include/utility.h"
 
+#pragma region Point Imp
 bool Point::operator==(const Point& p) const noexcept {
   return x == p.x && y == p.y;
 }
@@ -34,6 +35,9 @@ bool Point::In(Rect const& region) const noexcept {
   return ::In(*this, region);
 }
 
+#pragma endregion
+
+#pragma region Rect Imp
 Rect::Rect(int x, int y, int wid, int heig)
     : origin{x, y}, width(wid), height(heig) {}
 int Rect::block(Point const& p, int wb, int hb) {
@@ -62,6 +66,8 @@ Rect const& Rect::getRegion(int num, int hdiv, int vdiv) const noexcept {
 Point Rect::RegionCenterPoint(Rect const& r) noexcept {
   return r.RegionCenterPoint();
 }
+
+#pragma endregion
 
 Square::Square(int x, int y, int width) : Rect{x, y, width, width} {}
 int Square::block(Point const& p, int blk) { return Rect::block(p, blk, blk); }

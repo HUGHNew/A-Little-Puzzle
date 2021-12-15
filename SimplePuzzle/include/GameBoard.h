@@ -3,11 +3,12 @@
 #include <list>
 #include "CharComet.hpp"
 #include "TicTacToe.h"
+#include "Snake.hpp"
 using CometCollection = std::list<CharComet>;
 class GameBoard {
   CometCollection comets;
   TicTacToe T3;
-
+  SnakeGameEasyX snake;
   int CometsAnswer, CurrentChoice, Progress;
   bool GoToEnd;
  public:

@@ -186,7 +186,14 @@ bool GameBoard::Comets() noexcept {
   }
 }
 // todo weird snake
-bool GameBoard::Snake() noexcept { return false; }
+bool GameBoard::Snake() noexcept { 
+    FlushAll();
+  Narrator::Say(Narrator::SnakeHiss);
+    FlushAll();
+  int rel = snake.play();
+  // TODO deal the occasion that you die
+    return false;
+}
 /**
  * @brief get input during 2 games
  * @return 
