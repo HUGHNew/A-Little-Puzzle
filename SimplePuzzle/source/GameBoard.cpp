@@ -221,20 +221,24 @@ bool GameBoard::TicTacToe() noexcept {
   ExMessage msg;
   do {      
     ++T3GameCounter;
+    FlushAll();
+    if (T3GameCounter == 1) {
+      Narrator::Say(Narrator::TStart);
+    } else if (T3GameCounter == 3) {
+      Narrator::Say(Narrator::TGame1);
+    } else if (T3GameCounter == 5) {
+      Narrator::Say(Narrator::TGame3);
+    } else if (T3GameCounter & 1 ) {
+      Narrator::Say(Narrator::TGame3);
+    }
     if (T3.play()==TicTacToe::Winner::O) {
       ++T3GameLoseCounter;
-      if (T3GameCounter == 1) {
-        Narrator::Say(Narrator::TStart);
-      } else if (T3GameCounter == 3) {
-        Narrator::Say(Narrator::TGame1);
-      } else if (T3GameCounter == 5) {
-        Narrator::Say(Narrator::TGame3);
-      } else if (T3GameCounter & 1 ) {
-        Narrator::Say(Narrator::TGame3);
-      }
+      Narrator::Say(Narrator::GameLose, false, 500);
+    } else {
+      Narrator::Say(Narrator::GameDraw, false, 500);
     }
+    Narrator::Say(Narrator::GameRestart, false, 1000);
     // TODO narrator should say somethings now
-    cleardevice();
     FlushAll();
     T3.DrawGameBoard();
     int op = getT3Input();

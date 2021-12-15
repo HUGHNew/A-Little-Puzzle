@@ -19,6 +19,9 @@ constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     constexpr static const wchar_t* Game1 = _T("取胜之道 从未有之");
     constexpr static const wchar_t* Game3 = _T("你应该知道了胜算如何");
     constexpr static const wchar_t* Game5 = _T("无意之举");
+    constexpr static const wchar_t* ResDraw = _T("平局");
+    constexpr static const wchar_t* ResLose = _T("你输了？");
+    constexpr static const wchar_t* Restart = _T("按ESC退出;点击重开");
     }  // namespace T3
     namespace End {
     constexpr static const wchar_t* LockAll = _T("前面的区域 以后再来探索吧");
@@ -30,7 +33,7 @@ constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     constexpr static const wchar_t* AllWords[] = {
         Comets::Hint, Comets::Start, Comets::Internal,
         Snake::Hiss,
-        T3::Start,T3::Game1,T3::Game3,T3::Game5,
+        T3::Start,T3::Game1,T3::Game3,T3::Game5,T3::ResDraw,T3::ResLose,T3::Restart,
         End::LockAll, End::LockRest, End::LockComet,End::Unlock,End::Others,
         ESC,ANS
     };
@@ -59,7 +62,7 @@ class Narrator {
   enum PuzzleAside {
     CometHint, CometStart, CometInternal,
     SnakeHiss,
-    TStart, TGame1, TGame3, TGame5,
+    TStart, TGame1, TGame3, TGame5,GameDraw,GameLose,GameRestart,
     LockALL, LockRest, LockComet, Unlock, LockOthers,
     ESC,ANS
   };
