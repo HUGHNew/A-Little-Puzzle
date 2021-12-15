@@ -98,10 +98,11 @@ void TicTacToe::GetInputAndDraw(int pos, bool XStep) noexcept {
     X.push_back(MAGIC_SQUARE[pos - 1]);
     --pos;
   } else {
-    pos = M2Idx[pos - 1];
-    lastOppo = pos;
-    Board[pos] = 'O';
+    int idx = M2Idx[pos - 1];
+    lastOppo = idx;
+    Board[idx] = 'O';
     O.push_back(pos);  // directly store the value
+    pos = idx;
   }
   Point center = screen.getRegion(pos).RegionCenterPoint();
   if(XStep) {

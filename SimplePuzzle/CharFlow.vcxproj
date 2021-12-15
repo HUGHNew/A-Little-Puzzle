@@ -142,11 +142,15 @@
   <ItemGroup>
     <ClCompile Include="main.cpp" />
     <ClCompile Include="source\GameBoard.cpp" />
+    <ClCompile Include="source\T3Base.cpp" />
+    <ClCompile Include="source\TicTacToe.cpp" />
     <ClCompile Include="source\utility.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\CharComet.hpp" />
     <ClInclude Include="include\GameBoard.h" />
+    <ClInclude Include="include\T3Base.h" />
+    <ClInclude Include="include\TicTacToe.h" />
     <ClInclude Include="include\utility.h" />
     <ClInclude Include="source\Narrator.hpp" />
   </ItemGroup>

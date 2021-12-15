@@ -16,9 +16,9 @@ constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     }
     namespace T3 {
     constexpr static const wchar_t* Start = _T("战胜我 拿到答案");
-    constexpr static const wchar_t* Fail1 = _T("取胜之道 从未有之");
-    constexpr static const wchar_t* Fail3 = _T("你应该知道了胜算如何");
-    constexpr static const wchar_t* Fail5 = _T("无意之举");
+    constexpr static const wchar_t* Game1 = _T("取胜之道 从未有之");
+    constexpr static const wchar_t* Game3 = _T("你应该知道了胜算如何");
+    constexpr static const wchar_t* Game5 = _T("无意之举");
     }  // namespace T3
     namespace End {
     constexpr static const wchar_t* LockAll = _T("前面的区域 以后再来探索吧");
@@ -30,7 +30,7 @@ constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     constexpr static const wchar_t* AllWords[] = {
         Comets::Hint, Comets::Start, Comets::Internal,
         Snake::Hiss,
-        T3::Start,T3::Fail1,T3::Fail3,T3::Fail5,
+        T3::Start,T3::Game1,T3::Game3,T3::Game5,
         End::LockAll, End::LockRest, End::LockComet,End::Unlock,End::Others,
         ESC,ANS
     };

@@ -215,7 +215,7 @@ int getT3Input() {
   }
 }
 bool GameBoard::TicTacToe() noexcept { 
-    static int T3GameCounter = 0;
+  static int T3GameCounter = 0;
   static int T3GameLoseCounter = 0;
     // TODO add T3 already
   ExMessage msg;
@@ -223,19 +223,32 @@ bool GameBoard::TicTacToe() noexcept {
     ++T3GameCounter;
     if (T3.play()==TicTacToe::Winner::O) {
       ++T3GameLoseCounter;
+      if (T3GameCounter == 1) {
+        Narrator::Say(Narrator::TStart);
+      } else if (T3GameCounter == 3) {
+        Narrator::Say(Narrator::TGame1);
+      } else if (T3GameCounter == 5) {
+        Narrator::Say(Narrator::TGame3);
+      } else if (T3GameCounter & 1 ) {
+        Narrator::Say(Narrator::TGame3);
+      }
     }
     // TODO narrator should say somethings now
+    cleardevice();
     FlushAll();
+    T3.DrawGameBoard();
     int op = getT3Input();
     // restart a game
-    FlushAll();
+    //FlushAll();
     switch (op) {
       case 1:
         T3.clear();
         break;
       case 0:
+        Narrator::Say(Narrator::ANS);
         return true;
       case -1:
+        Narrator::Say(Narrator::ESC);
         return false;
     }
   } while (true);
@@ -406,7 +419,7 @@ int GameBoard::GetStartMenuRawBlockInput(bool press) noexcept {
 }
 
 void GameBoard::FlushAll() noexcept {
-  flush_key_msg(-1);
   cleardevice();
+  flush_key_msg(-1);
   FlushConsoleInputBuffer(GetStdHandle(STD_INPUT_HANDLE)); // Windows Console API
 }

@@ -102,8 +102,18 @@ Direction GetDirection() noexcept {
 }
 }  // namespace Random
 
-
-void DrawCross(int x, int y, double len) {
+#pragma region EasyX T3 Draw
+/**
+ * @brief Draw Cross Line;
+ * Two lines span half of the Y-axis angle
+ * default as 40
+ * @param x : the cross center X value
+ * @param y : the cross center Y value
+ * @param len : the length of each line
+ */
+void DrawCross(int x, int y) { DrawCross(x, y, getheight() / 4); }
+void DrawCircle(int x, int y) { DrawCircle(x, y, getheight() / 6); }
+void DrawCross(int x, int y, int len) {
   constexpr static unsigned long DColor = 0x34409D;
   setlinecolor(DColor);
   double Xdelta = len / 4, Ydelta = len / 4 * Sqrt3;
@@ -112,11 +122,12 @@ void DrawCross(int x, int y, double len) {
   line(x + Xdelta, y + Ydelta, x - Xdelta,
        y - Ydelta);  // draw backslash
 }
-void DrawCircle(int x, int y, double len) {
+void DrawCircle(int x, int y, int len) {
   constexpr static unsigned long DColor = 0x39AC3B;
   setlinecolor(DColor);
   circle(x, y, len);
 }
+#pragma endregion
 int inTicTacToeRegion(Point cursor, Rect T3, int xblock, int yblock) {
   return T3.block(cursor, xblock, yblock);
 }

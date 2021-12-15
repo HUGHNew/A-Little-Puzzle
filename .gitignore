@@ -6,7 +6,8 @@
 # self defined
 *.exe
 *.out
-*.pptx
+*.ppt*
+*.doc*
 
 # User-specific files
 *.rsuser

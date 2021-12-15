@@ -100,8 +100,10 @@ static VecOne<int> operator+(VecOne<int> const& raw, int e) { return e + raw; }
  * @param y : the cross center Y value
  * @param len : the length of each line
  */
-void DrawCross(int x, int y, double len = getheight() / 4);
-void DrawCircle(int x, int y, double len = getheight() / 6);
+void DrawCross(int x, int y);
+void DrawCircle(int x, int y);
+void DrawCross(int x, int y, int len);
+void DrawCircle(int x, int y, int len);
 #pragma endregion
 #pragma region debug
 int print_d(char const* const _Format, ...);

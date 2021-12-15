@@ -100,7 +100,8 @@ int T3Base::minmax(vec x, vec o, int depth, bool maximize) {
   return best;
 }
 void T3Base::clear() {
-  Board.clear();
+  Board.assign(9, ' '); // avoid subscript out of bounds
+  //Board.clear();
   X.clear();
   O.clear();
   winner = Winner::NotYet;
