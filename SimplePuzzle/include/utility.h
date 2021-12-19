@@ -22,14 +22,22 @@ struct Rect {
   Point origin;
   int width, height;
   Rect(int x, int y, int wid, int h);
+  Rect(Point const& p, int wid, int heig);
   int block(Point const& p, int wb, int hb);
   Point RegionCenterPoint() const noexcept;
+  bool collision(Rect const& other) const noexcept;
+  int coverage(Rect const& other) const noexcept;
+  int area() const noexcept { return width * height; }
   Rect const& getRegion(int num, int hdiv = 3, int vdiv = 3) const noexcept;
+  bool operator==(Rect const&) const noexcept;
   static Point RegionCenterPoint(Rect const&) noexcept;
 };
+
+template <int Size = 16>
 struct Square : Rect {
-  Square(int x, int y, int width);
-  int block(Point const& p, int blk);
+  Square(int x, int y) : Rect(x, y, Size, Size) {}
+  Square(Point const& p) : Square(p.x, p.y) {}
+  int block(Point const& p, int blk) const { return Rect::block(p, blk, blk); }
 };
 int inTicTacToeRegion(Point cursor, Rect T3, int xblock, int yblock);
 int inTicTacToeRegion(Point cursor, Rect T3, int blocks);
@@ -41,11 +49,12 @@ int GetRandom(int min, int max, bool normal = false) noexcept;
 char GetRandomAscii() noexcept;
 /**
  * @brief normal distribution
-*/
+ */
 char GetRandomAscii(int pos) noexcept;
-Point GetPoint() noexcept;
+Point GetPoint(int x, int y) noexcept;
 Point GetPoint(Point const& corner) noexcept;
 Direction GetDirection() noexcept;
+int GetColor() noexcept;
 }  // namespace Random
 
 #pragma region In

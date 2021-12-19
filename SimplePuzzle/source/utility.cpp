@@ -38,8 +38,10 @@ bool Point::In(Rect const& region) const noexcept {
 #pragma endregion
 
 #pragma region Rect Imp
-Rect::Rect(int x, int y, int wid, int heig)
+inline Rect::Rect(int x, int y, int wid, int heig)
     : origin{x, y}, width(wid), height(heig) {}
+inline Rect::Rect(Point const& p, int wid, int heig)
+    : Rect(p.x, p.y, wid, heig) {}
 int Rect::block(Point const& p, int wb, int hb) {
   if (p.In(*this)) {
     int x = p.x - origin.x, y = p.y - origin.y;
@@ -63,48 +65,72 @@ Rect const& Rect::getRegion(int num, int hdiv, int vdiv) const noexcept {
   return Rect(ox, oy, width, height);
 }
 
+bool Rect::operator==(Rect const& r) const noexcept {
+  return this->origin == r.origin && width == r.width && height == r.height;
+}
+
 Point Rect::RegionCenterPoint(Rect const& r) noexcept {
   return r.RegionCenterPoint();
 }
-
+bool Rect::collision(Rect const& other) const noexcept {
+  int dis_x = abs(origin.x + width / 2 - other.origin.x - other.width / 2),
+      dis_y = abs(origin.y + height / 2 - other.origin.y - other.height / 2);
+  return dis_x < (width + other.width) / 2 &&
+         dis_y < (height + other.height) / 2;
+}
+int Rect::coverage(Rect const& other) const noexcept {
+  if (collision(other)) {
+    //  TODO
+    return 0;
+  } else {
+    return 0;
+  }
+}
 #pragma endregion
-
-Square::Square(int x, int y, int width) : Rect{x, y, width, width} {}
-int Square::block(Point const& p, int blk) { return Rect::block(p, blk, blk); }
-
 
 namespace Random {
 static std::random_device seed;
 static std::default_random_engine random_engine(seed());
 static std::uniform_int_distribution<> distribution;
 static std::normal_distribution<> normal_dist;
-using NDT=std::normal_distribution<>::param_type;
-char GetRandomUppercase(bool normal) noexcept { return GetRandom('A', 'Z',normal); }
-char GetRandomLowercase(bool normal) noexcept { return GetRandom('a', 'z',normal); }
-int GetRandom(int max, bool normal) noexcept { return GetRandom(0, max, normal); }
+using NDT = std::normal_distribution<>::param_type;
+char GetRandomUppercase(bool normal) noexcept {
+  return GetRandom('A', 'Z', normal);
+}
+char GetRandomLowercase(bool normal) noexcept {
+  return GetRandom('a', 'z', normal);
+}
+int GetRandom(int max, bool normal) noexcept {
+  return GetRandom(0, max, normal);
+}
 int GetRandom(int min, int max, bool normal) noexcept {
   return normal ? normal_dist(random_engine,
                               NDT((max + min) >> 1, (max - min) >> 2))
                 : distribution(random_engine, max - min) + min;
 }
-char GetRandomAscii(int pos,bool normal) noexcept {
-  int tmp = normal? 
-      normal_dist(random_engine, NDT(pos, pos >> 3 ? pos >> 3:1))
-      : 
-      distribution(random_engine, 36);
+char GetRandomAscii(int pos, bool normal) noexcept {
+  int tmp = normal
+                ? normal_dist(random_engine, NDT(pos, pos >> 3 ? pos >> 3 : 1))
+                : distribution(random_engine, 36);
   if (tmp > 9) {
     return tmp - 10 + 'A';
   } else {
     return tmp + '0';
   }
 }
-char GetRandomAscii() noexcept { return GetRandomAscii(0,false); }
-char GetRandomAscii(int pos) noexcept { return GetRandomAscii(pos,true); }
+char GetRandomAscii() noexcept { return GetRandomAscii(0, false); }
+char GetRandomAscii(int pos) noexcept { return GetRandomAscii(pos, true); }
+Point GetPoint(int x, int y) noexcept {
+  return Point(GetRandom(0, x), GetRandom(0, y));
+}
 Point GetPoint(Point const& corner) noexcept {
   return Point(GetRandom(0, corner.x), GetRandom(0, corner.y));
 }
 Direction GetDirection() noexcept {
   return Direction(1 << distribution(random_engine, 4));
+}
+int GetColor() noexcept {
+  return (GetRandom(255) << 16) + (GetRandom(255) << 8) + GetRandom(255);
 }
 }  // namespace Random
 
@@ -141,15 +167,14 @@ int inTicTacToeRegion(Point cursor, Rect T3, int blocks) {
   return T3.block(cursor, blocks, blocks);
 }
 
-
-int print_d(char const* const _Format, ...){
+int print_d(char const* const _Format, ...) {
 #ifdef DEBUG
-    int _Result;
-    va_list _ArgList;
-    __crt_va_start(_ArgList, _Format);
-    _Result = _vfprintf_l(stdout, _Format, NULL, _ArgList);
-    __crt_va_end(_ArgList);
-    return _Result;
+  int _Result;
+  va_list _ArgList;
+  __crt_va_start(_ArgList, _Format);
+  _Result = _vfprintf_l(stdout, _Format, NULL, _ArgList);
+  __crt_va_end(_ArgList);
+  return _Result;
 #else
   return 0;
 #endif

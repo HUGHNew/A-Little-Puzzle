@@ -52,7 +52,7 @@ static RECT GetTitleRect(RECT const& base) {
 #pragma endregion
 
 
-GameBoard::GameBoard() noexcept : CometsAnswer(Random::GetRandomAscii()) {
+GameBoard::GameBoard() noexcept : CometsAnswer(Random::GetRandomAscii()),snake(getwidth(),getheight(),16,false) {
   CurrentChoice = 1;
   Progress = 0;
   GoToEnd = false;
@@ -188,11 +188,17 @@ bool GameBoard::Comets() noexcept {
 // todo weird snake
 bool GameBoard::Snake() noexcept { 
     FlushAll();
-  Narrator::Say(Narrator::SnakeHiss);
+    Narrator::Say(Narrator::SnakeHiss);
     FlushAll();
-  int rel = snake.play();
-  // TODO deal the occasion that you die
-    return false;
+    bool ans = snake.play();
+    EndBatchDraw();
+    if (ans) {
+      Narrator::Say(Narrator::ANS);
+    } else {
+      Narrator::Say(Narrator::ESC);
+    }
+    FlushAll();
+    return ans;
 }
 /**
  * @brief get input during 2 games
@@ -225,7 +231,7 @@ bool GameBoard::TicTacToe() noexcept {
   static int T3GameCounter = 0;
   static int T3GameLoseCounter = 0;
     // TODO add T3 already
-  ExMessage msg;
+  //ExMessage msg;
   do {      
     ++T3GameCounter;
     FlushAll();
@@ -289,7 +295,7 @@ void GameBoard::TheEnd() noexcept {
 }
 
 int GameBoard::StartMenu() noexcept {
-  InitStartMenu();
+  DrawStartMenu(getBitPos(CurrentChoice));
   int ch;
   while (true) {
     switch (ch = GetStartMenuOptions(CometsAnswer)) {
@@ -307,7 +313,6 @@ int GameBoard::StartMenu() noexcept {
   }
 }
 
-void GameBoard::InitStartMenu() const noexcept { DrawStartMenu(0); }
 #pragma region constant 
 const wchar_t* GameBoard::Comments::Title =
     _T("这里是只需要键盘的小解谜，每个游戏都会自己的答案\n按方向键切换游戏;按回车键进入;")
@@ -387,7 +392,7 @@ int GameBoard::GetStartMenuOptions(int comet) noexcept {
   int proc=0,current;
   do{
     current=GetStartMenuRawBlockInput();
-    print_d("current:%d,ans:%d\n",current,AnswerSet[proc]);
+    //print_d("current:%d,ans:%d\n",current,AnswerSet[proc]);
     if(current==AnswerSet[proc]){
       ++proc;
     }else{
@@ -413,7 +418,7 @@ int GameBoard::GetStartMenuRawBlockInput(bool press) noexcept {
   while (msg.message != (press ? WM_KEYDOWN : WM_KEYUP)) {
     msg = getmessage(EM_KEY);
   }
-  print_d("%d\n", msg.vkcode);
+  //print_d("%d\n", msg.vkcode);
   if (Point::InRange(msg.vkcode, 'a', 'z'+1)) {
     return msg.vkcode - 'a' + 'A';
   } else if (Point::InRange(msg.vkcode, 'A', 'Z'+1) ||

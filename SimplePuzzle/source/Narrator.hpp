@@ -6,7 +6,7 @@ constexpr static const wchar_t* ESC = _T("终于放弃了？");
 constexpr static const wchar_t* ANS = _T("你悟了"); // answer
     namespace Comets {
     constexpr static const wchar_t* Hint =
-        _T("按下你所看见出现次数最多的符号");
+        _T("按下你所看见\n出现次数最多的符号");
     constexpr static const wchar_t* Start =
         _T("很久之后，它或许会浮现\n不过，一瞬之间");
     constexpr static const wchar_t* Internal = _T("只是一瞬，抑或是永恒");

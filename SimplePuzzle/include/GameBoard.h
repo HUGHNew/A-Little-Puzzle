@@ -28,7 +28,6 @@ class GameBoard {
    *  1 : step hidden stage
   */
   int StartMenu() noexcept;
-  void InitStartMenu()const noexcept;
   /**
    * @param idx Game options
   */
