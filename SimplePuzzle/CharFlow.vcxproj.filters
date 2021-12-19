@@ -13,35 +13,44 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="UnitTest">
-      <UniqueIdentifier>{81c5f760-e81b-4744-a8aa-90a1e2729421}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="SimplePuzzle.cpp">
+    <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="FallingChar.cpp">
+    <ClCompile Include="source\GameBoard.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TicTacToe.cpp">
+    <ClCompile Include="source\utility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="UnitTest.cpp">
-      <Filter>UnitTest</Filter>
+    <ClCompile Include="source\T3Base.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\TicTacToe.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="FallingChar.h">
+    <ClInclude Include="include\GameBoard.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="base.hpp">
+    <ClInclude Include="include\CharComet.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TicTacToe.h">
+    <ClInclude Include="source\Narrator.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Tools.hpp">
+    <ClInclude Include="include\utility.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\T3Base.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\TicTacToe.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\Snake.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
