@@ -8,6 +8,7 @@
 *.out
 *.ppt*
 *.doc*
+*.zip
 
 # User-specific files
 *.rsuser

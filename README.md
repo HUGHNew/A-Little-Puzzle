@@ -5,9 +5,10 @@
 
 之后显示 **to be continued**
 
-音效/音频使用
+~~音效/音频使用~~ 没有使用
 
 -   [disable](https://www.ear0.com/sound/show/soundid-12620) by Douglas
 -   [comet](https://freesound.org/s/403488/) CC-BY-NC by tim.kahn
--   
+
+
 
