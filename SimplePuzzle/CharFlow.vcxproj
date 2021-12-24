@@ -155,6 +155,11 @@
     <ClInclude Include="include\utility.h" />
     <ClInclude Include="source\Narrator.hpp" />
   </ItemGroup>
+  <ItemGroup>
+    <Media Include="res\comet.mp3" />
+    <Media Include="res\disable.mp3" />
+    <Media Include="res\succeed.mp3" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
