@@ -19,7 +19,7 @@ class T3Base {
   const static int WIN = 10;
   bool finished(vec const &, vec const &);
   /**
-   * @brief ÆÀ¹Àµ±Ç°¾ÖÊÆ
+   * @brief è¯„ä¼°å½“å‰å±€åŠ¿
    */
   int eval(vec &, vec &);
   Winner eval();
@@ -47,7 +47,7 @@ class T3Base {
   Match matcher;
   bool win(vec &) noexcept;
   /**
-   * @brief calc the score of currnt step
+   * @brief calc the score of current step
    * @param depth the depth of current level
    * @param maximize whether makes the score higher or not
    * decide which player is searching, too
